@@ -1,9 +1,10 @@
 import tg
 import inspect
-from utils import object_primary_key
+from .utils import object_primary_key
 from itertools import chain
 from hashlib import md5
 from tg.decorators import cached_property
+from builtins import str
 
 try:
     import sqlalchemy.orm.exc as sqla_exc
@@ -29,7 +30,7 @@ class entitycached(object):
 
     def _get_argspec(self, func):
         try:
-            im_func = func.im_func
+            im_func = func.__func__
         except AttributeError:
             im_func = func
 
@@ -58,8 +59,8 @@ class entitycached(object):
             return self.cache_namespace
 
         try:
-            im_func = func.im_func.__name__
-            im_class = (func.im_self if func.im_class == type else func.im_class).__name__
+            im_func = func.__func__.__name__
+            im_class = (func.__func__ if func.__self__.__class__ == type else func.__self__.__class__).__name__
             im_module = self.func_module
         except AttributeError:
             im_func = func.__name__

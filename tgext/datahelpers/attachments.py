@@ -1,13 +1,18 @@
-import tg, os, shutil, cgi, json, tempfile
+import tg, os, shutil, json
 import uuid as uuid_m
 from tg.decorators import cached_property
 from .utils import MarkupString
+from builtins import dict, str
 
 try:
     from PIL import Image
 except ImportError:
     import Image
 
+try:
+    basestring
+except NameError:
+    basestring = str
 
 class AttachedFile(object):
     def __init__(self, file, filename, uuid=None):
@@ -17,7 +22,7 @@ class AttachedFile(object):
 
         self._file = file
 
-        self.filename = unicode(filename)
+        self.filename = str(filename)
         self.url = '/'.join([self.attachments_url, self.uuid, self.filename])
         self.local_path = os.path.join(self.attachment_dir, self.filename)
 
@@ -38,12 +43,12 @@ class AttachedFile(object):
             attachments_path = os.path.join(tg.config['here'], tg.config['package'].__name__.lower(),
                                             'public', 'attachments')
         attachment_dir = os.path.join(attachments_path, self.uuid)
-        return unicode(attachment_dir)
+        return str(attachment_dir)
 
     def write(self):
         try:
             os.mkdir(self.attachment_dir)
-        except Exception, e:
+        except Exception as e:
             pass
 
         if getattr(self.file, 'name', None) != self.local_path:
@@ -54,12 +59,12 @@ class AttachedFile(object):
         shutil.rmtree(self.attachment_dir)
 
     def encode(self):
-        return unicode(json.dumps({'file':self.local_path, 'filename':self.filename, 'uuid':self.uuid}))
+        return str(json.dumps({'file':self.local_path, 'filename':self.filename, 'uuid':self.uuid}))
 
     @classmethod
     def decode(cls, value):
         params = {}
-        for key, value in json.loads(value).iteritems():
+        for key, value in json.loads(value).items():
             params[str(key)] = value
         return cls(**params)
 
@@ -68,7 +73,7 @@ class AttachedImage(AttachedFile):
     thumbnail_size = (128, 128)
     thumbnail_format = 'png'
 
-    def __unicode__(self):
+    def __str__(self):
          # This is an huge hack, should find a better way to provide HTML for the image
         try:
             url = tg.url(self.thumb_url)

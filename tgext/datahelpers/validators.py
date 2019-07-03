@@ -24,8 +24,8 @@ def validated_handler(func_, **kw):
         def func(*args, **kw):
             return func_(*args, **kw)
         func.decoration = func_.decoration
-        func.im_func = func_
-        func.im_self = controller
+        func.__func__ = func_
+        func.__self__ = controller
 
         validate_params = tg_get_params_with_argspec(controller, func, params, remainder)
 
