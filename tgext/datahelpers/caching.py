@@ -64,7 +64,13 @@ class entitycached(object):
 
         try:
             im_func = func.__func__.__name__
-            im_class = (func.__func__ if func.__self__.__class__ == type else func.__self__.__class__).__name__
+            if func.__self__ == type:
+                im_class = func.__func__.__name__
+            else:
+                try:
+                    im_class = func.__self__.__name__
+                except AttributeError:
+                    im_class = func.__self__.__class__.__name__
             im_module = self.func_module
         except AttributeError:
             im_func = func.__name__
@@ -101,12 +107,15 @@ class entitycached(object):
 
     def __call__(self, func):
         #Precalculate argspec
-        if not hasattr(func, 'func_name'):
+        if not hasattr(func, '__name__') and func.__class__.__name__ != 'classmethod':
             raise TypeError('decorated object seems not to be a function or method, \
 if you are using multiple decorators check that @entitycached is the first.')
 
         self.argspec = self._get_argspec(func)
-        self.func_module = func.__module__
+        try:
+            self.func_module = func.__module__
+        except AttributeError:  # classmethod
+            self.func_module = func.__func__.__module__
 
         def wrapped_function(*args, **kw):
             cache_namespace = self._determine_namespace(func)
@@ -127,7 +136,10 @@ if you are using multiple decorators check that @entitycached is the first.')
 
         #Look like the decorated function
         wrapped_function.__doc__ = func.__doc__
-        wrapped_function.__name__ = func.__name__
+        try:
+            wrapped_function.__name__ = func.__name__
+        except AttributeError:
+            wrapped_function.__name__ = func.__func__.__name__
         wrapped_function.__entitycached__ = self
         return wrapped_function
 

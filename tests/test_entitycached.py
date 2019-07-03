@@ -13,7 +13,8 @@ class TestNameSpaceGeneration(object):
         @entitycached('entity')
         def function(entity):
             return 'HI'
-        assert function.__entitycached__._determine_namespace(function) == 'tests.test_entitycached--function'
+        namespace = function.__entitycached__._determine_namespace(function)
+        assert namespace == 'tests.test_entitycached--function', namespace
 
     def test_namespace_for_method(self):
         class Object(object):
@@ -21,7 +22,8 @@ class TestNameSpaceGeneration(object):
             def method(self, entity):
                 return 'HI'
         o = Object()
-        assert o.method.__entitycached__._determine_namespace(o.method) == 'tests.test_entitycached-Object-method'
+        namespace = o.method.__entitycached__._determine_namespace(o.method)
+        assert namespace == 'tests.test_entitycached-Object-method', namespace
 
     def test_namespace_for_staticmethod(self):
         class Object(object):
@@ -30,7 +32,8 @@ class TestNameSpaceGeneration(object):
             def method(entity):
                 return 'HI'
         o = Object()
-        assert o.method.__entitycached__._determine_namespace(o.method) == 'tests.test_entitycached--method'
+        namespace = o.method.__entitycached__._determine_namespace(o.method)
+        assert namespace == 'tests.test_entitycached--method', namespace
 
     def test_namespace_for_classmethod(self):
         class Object(object):
@@ -39,7 +42,8 @@ class TestNameSpaceGeneration(object):
             def method(cls, entity):
                 return 'HI'
         o = Object()
-        assert o.method.__entitycached__._determine_namespace(o.method) == 'tests.test_entitycached-Object-method'
+        namespace = o.method.__entitycached__._determine_namespace(o.method)
+        assert namespace == 'tests.test_entitycached-Object-method', namespace
 
     def test_namespace_forced(self):
         class Object(object):
@@ -50,7 +54,9 @@ class TestNameSpaceGeneration(object):
         o = Object()
         assert o.method.__entitycached__._determine_namespace(o.method) == 'something'
 
-    @raises(TypeError)
+    #@raises(TypeError)
+    # now it works too in inversed order.
+    # anyway it's not clear if the decorator should be the first or the last, as the docstring said it must be the first
     def test_namespace_for_inverse_classmethod(self):
         class Object(object):
             @entitycached('entity')
