@@ -18,6 +18,12 @@ except:
     except ImportError:
         PIL_DEPENDENCY = ['pillow']
 
+testpkgs = [
+    'sqlalchemy',
+    'ming',
+    'nose',
+]
+        
 setup(name='tgext.datahelpers',
       version=version,
       description="Helpers to manage data and attachments on TurboGears",
@@ -39,8 +45,13 @@ setup(name='tgext.datahelpers',
       package_data = {'':['*.html', '*.js', '*.css', '*.png', '*.gif']},
       zip_safe=False,
       install_requires=[
-        "TurboGears2 >= 2.1"
+          "TurboGears2 >= 2.1",
+          "formencode",
+          "beaker",
       ] + PIL_DEPENDENCY,
+      extras_require={
+        'testing': testpkgs,
+      },
       entry_points="""
       # -*- Entry points: -*-
       """,

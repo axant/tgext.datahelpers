@@ -2,7 +2,12 @@ import tg, os, shutil, json
 import uuid as uuid_m
 from tg.decorators import cached_property
 from .utils import MarkupString
-from builtins import dict, str
+
+try:
+    from builtins import dict, str
+except ImportError:
+    from __builtin__ import dict, str
+
 
 try:
     from PIL import Image

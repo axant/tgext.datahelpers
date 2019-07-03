@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tg.exceptions import HTTPNotFound
 from nose.tools import raises
-from sqla_base import setup_database, clear_database, DBSession, Thing
+from .sqla_base import setup_database, clear_database, DBSession, Thing
 
 def setup():
     setup_database()

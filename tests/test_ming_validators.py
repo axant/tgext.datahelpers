@@ -1,7 +1,7 @@
 from bson import ObjectId
 from formencode import Invalid
 from nose.tools import raises
-from ming_base import setup_database, clear_database, DBSession, Thing
+from .ming_base import setup_database, clear_database, DBSession, Thing
 from tgext.datahelpers.validators import MingEntityConverter
 
 def setup():

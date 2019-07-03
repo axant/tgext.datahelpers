@@ -25,7 +25,7 @@ class fail_with(object):
     def __call__(self, *args, **kw):
         abort(self.code)
 
-class MarkupString(unicode):
+class MarkupString(str):
     def __html__(self):
         return self
 

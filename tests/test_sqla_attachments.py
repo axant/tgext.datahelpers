@@ -4,7 +4,7 @@ import tempfile, tg, os, shutil, cgi, base64
 from PIL import Image
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Unicode, Integer
-from sqla_base import setup_database, clear_database, DeclarativeBase, DBSession, Thing
+from .sqla_base import setup_database, clear_database, DeclarativeBase, DBSession, Thing
 from tgext.datahelpers.fields import Attachment, AttachedFile, AttachedImage
 
 def setup():

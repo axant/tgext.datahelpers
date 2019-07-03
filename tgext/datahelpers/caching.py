@@ -4,7 +4,11 @@ from .utils import object_primary_key
 from itertools import chain
 from hashlib import md5
 from tg.decorators import cached_property
-from builtins import str
+
+try:
+    from builtins import str
+except ImportError:
+    from __builtin__ import str
 
 try:
     import sqlalchemy.orm.exc as sqla_exc

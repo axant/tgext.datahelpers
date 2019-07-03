@@ -1,6 +1,6 @@
 from formencode import Invalid
 from nose.tools import raises
-from sqla_base import setup_database, clear_database, DBSession, Thing
+from .sqla_base import setup_database, clear_database, DBSession, Thing
 from tgext.datahelpers.validators import SQLAEntityConverter
 
 def setup():

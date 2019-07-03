@@ -1,7 +1,9 @@
 from nose.tools import raises
 from tgext.datahelpers.caching import entitycached, CacheKey
-import ming_base as mingbase
-import sqla_base as sqlabase
+from .ming_base import setup_database as  ming_setup_database, clear_database as ming_clear_database,\
+    Thing as MingThing, ThingWithDate as MingThingWithDate
+from .sqla_base import setup_database as sqla_setup_database, clear_database as sqla_clear_database,\
+    Thing as SqlaThing, ThingWithDate as SqlaThingWithDate, DBSession as SqlaDBSession
 from datetime import datetime
 import tg
 from sqlalchemy.orm.exc import DetachedInstanceError
@@ -91,8 +93,8 @@ class TestCacheKey(object):
         self.function.__entitycached__._determine_cachekey([Object()], {})
 
     def test_cache_key_ming_without_date(self):
-        mingbase.setup_database()
-        mo = mingbase.Thing(name='something')
+        ming_setup_database()
+        mo = MingThing(name='something')
 
         passed = False
         try:
@@ -100,32 +102,32 @@ class TestCacheKey(object):
         except ValueError:
             passed = True
 
-        mingbase.clear_database()
+        ming_clear_database()
         assert passed
 
     def test_cache_key_ming(self):
-        mingbase.setup_database()
-        mo = mingbase.ThingWithDate(name='something')
+        ming_setup_database()
+        mo = MingThingWithDate(name='something')
 
         expected_key = '%s-%s' % (mo._id, mo.updated_at.strftime('%Y%m%d%H%M%S'))
         try:
             assert self.function.__entitycached__._determine_cachekey([mo], {}) == expected_key
         finally:
-            mingbase.clear_database()
+            ming_clear_database()
 
     def test_cache_key_sqla(self):
-        sqlabase.setup_database()
-        sqlabase.clear_database()
+        sqla_setup_database()
+        sqla_clear_database()
 
-        mo = sqlabase.ThingWithDate(name=u'something')
-        sqlabase.DBSession.add(mo)
-        sqlabase.DBSession.flush()
+        mo = SqlaThingWithDate(name=u'something')
+        SqlaDBSession.add(mo)
+        SqlaDBSession.flush()
 
         expected_key = '%s-%s' % (mo.uid, mo.updated_at.strftime('%Y%m%d%H%M%S'))
         try:
             assert self.function.__entitycached__._determine_cachekey([mo], {}) == expected_key
         finally:
-            sqlabase.clear_database()
+            sqla_clear_database()
 
 class TestCacheWorking(object):
     def __init__(self):
@@ -165,32 +167,32 @@ class TestCacheWorking(object):
         assert self.counter.inc(key) == 1
 
     def test_cache_key_sqlamerge(self):
-        sqlabase.setup_database()
-        sqlabase.clear_database()
+        sqla_setup_database()
+        sqla_clear_database()
 
-        tg.config['DBSession'] = sqlabase.DBSession
+        tg.config['DBSession'] = SqlaDBSession
 
-        o = sqlabase.Thing(name=u'foobar')
-        sqlabase.DBSession.add(o)
-        mo = sqlabase.ThingWithDate(name=u'something', related_thing=o)
-        sqlabase.DBSession.add(mo)
-        sqlabase.DBSession.flush()
-        sqlabase.DBSession.commit()
+        o = SqlaThing(name=u'foobar')
+        SqlaDBSession.add(o)
+        mo = SqlaThingWithDate(name=u'something', related_thing=o)
+        SqlaDBSession.add(mo)
+        SqlaDBSession.flush()
+        SqlaDBSession.commit()
 
         @entitycached('arg', sqla_merge=True)
         def with_sqla_merge_func(arg):
-            return sqlabase.DBSession.query(sqlabase.ThingWithDate).all()
+            return SqlaDBSession.query(SqlaThingWithDate).all()
 
         @entitycached('arg', sqla_merge=False)
         def without_sqla_merge_func(arg):
-            return sqlabase.DBSession.query(sqlabase.ThingWithDate).all()
+            return SqlaDBSession.query(SqlaThingWithDate).all()
 
         #Fetch results to cache them
         results = with_sqla_merge_func(CacheKey(cache_key='HI'))
         results = without_sqla_merge_func(CacheKey(cache_key='HI'))
 
         #remove session
-        sqlabase.DBSession.remove()
+        SqlaDBSession.remove()
 
         #Check that cached results fail to work when not merged back
         try:
