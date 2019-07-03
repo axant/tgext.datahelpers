@@ -103,3 +103,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+container_file/
+container_file_lock/

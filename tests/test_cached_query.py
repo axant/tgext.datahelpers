@@ -3,6 +3,7 @@ from .sqla_base import setup_database as sqla_setup_database, clear_database as 
     DBSession as SqlaDBSession, ThingWithDate as SqlaThingWithDate, Thing as SqlaThing
 import tg
 import beaker
+import beaker.cache
 from nose.tools import raises
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
