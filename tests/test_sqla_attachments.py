@@ -30,7 +30,7 @@ class TestSQLAAttachments(object):
     def __init__(self):
         self.file_content = 'this is the file content'
         self.fake_file = tempfile.NamedTemporaryFile()
-        self.fake_file.write(self.file_content)
+        self.fake_file.write(self.file_content.encode('utf-8'))
         self.fake_file.flush()
 
     def setup(self):
@@ -82,7 +82,7 @@ class TestSQLAImageAttachments(object):
         DBSession.commit()
 
         d = DBSession.query(Document).filter_by(name=u'Foo').first()
-        assert d.photo.file.read() == self.file_content
+        assert open(d.photo.file.name, 'rb').read() == self.file_content
         assert d.photo.filename == os.path.basename(self.fake_file.name)
 
     def test_create_fromfield(self):
@@ -96,7 +96,7 @@ class TestSQLAImageAttachments(object):
         DBSession.commit()
 
         d = DBSession.query(Document).filter_by(name=u'Foo').first()
-        assert d.photo.file.read() == self.file_content
+        assert open(d.photo.file.name, 'rb').read() == self.file_content
         assert d.photo.filename == field.filename
         assert d.photo.url.startswith('/attachments/')
         assert d.photo.url.endswith(field.filename)

@@ -166,7 +166,7 @@ class cached_query(object):
         query_text = " ".join(chain([str(compiled)],
                                     [str(params[k]) for k in sorted(params)]))
 
-        return md5(query_text).hexdigest()
+        return md5(query_text.encode('utf-8')).hexdigest()
 
     def _perform_query(self):
         return list(self._query.__iter__())

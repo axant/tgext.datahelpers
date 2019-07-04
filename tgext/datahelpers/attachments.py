@@ -3,10 +3,7 @@ import uuid as uuid_m
 from tg.decorators import cached_property
 from .utils import MarkupString
 
-try:
-    from builtins import dict, str
-except ImportError:
-    from __builtin__ import dict, str
+from builtins import dict, str
 
 
 try:
@@ -57,8 +54,13 @@ class AttachedFile(object):
             pass
 
         if getattr(self.file, 'name', None) != self.local_path:
-            shutil.copyfileobj(self.file, open(self.local_path, 'w+'))
-            self.file.seek(0)
+            try:
+                shutil.copyfileobj(self.file, open(self.local_path, 'w+'))
+                self.file.seek(0)
+            except UnicodeDecodeError:
+                data = open(self.file.name, 'rb').read()
+                with open(self.local_path, 'wb+') as dst:
+                    dst.write(data)
 
     def unlink(self):
         shutil.rmtree(self.attachment_dir)
@@ -99,7 +101,11 @@ class AttachedImage(AttachedFile):
 
         if getattr(self.file, 'name', None) != self.local_path:
             self.file.seek(0)
-            thumbnail = Image.open(self.file)
+            try:
+                thumbnail = Image.open(self.file)
+            except UnicodeDecodeError:
+                from io import BytesIO
+                thumbnail = Image.open(BytesIO(open(self.file.name, 'rb').read()))
             thumbnail.thumbnail(self.thumbnail_size, Image.BILINEAR)
             thumbnail = thumbnail.convert('RGBA')
             thumbnail.format = self.thumbnail_format

@@ -48,6 +48,7 @@ setup(name='tgext.datahelpers',
           "TurboGears2 >= 2.1",
           "formencode",
           "beaker",
+          "future",
       ] + PIL_DEPENDENCY,
       extras_require={
         'testing': testpkgs,
