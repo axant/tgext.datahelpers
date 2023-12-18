@@ -106,3 +106,7 @@ venv.bak/
 
 container_file/
 container_file_lock/
+
+# Eclipse IDE + PyDev
+/.project
+/.pydevproject
