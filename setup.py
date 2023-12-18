@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2.1'
+version = '0.2.2'
 
 here = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -23,7 +23,7 @@ testpkgs = [
     'ming',
     'nose',
 ]
-        
+
 setup(name='tgext.datahelpers',
       version=version,
       description="Helpers to manage data and attachments on TurboGears",
@@ -35,9 +35,9 @@ setup(name='tgext.datahelpers',
         "Framework :: TurboGears"
         ],
       keywords='turbogears2.extension',
-      author='Alessandro Molina',
-      author_email='alessandro.molina@axant.it',
-      url='https://github.com/axant/tgext.datahelpers',
+      author='Jaroslav Mikulík',
+      author_email='byczech@gmail.com',
+      url='https://github.com/ByCzech/tgext.datahelpers',
       license='MIT',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['tgext'],
