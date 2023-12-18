@@ -55,7 +55,7 @@ class AttachedFile(object):
 
         if getattr(self.file, 'name', None) != self.local_path:
             try:
-                shutil.copyfileobj(self.file, open(self.local_path, 'w+'))
+                shutil.copyfileobj(self.file, open(self.local_path, 'wb+'))
                 self.file.seek(0)
             except UnicodeDecodeError:
                 data = open(self.file.name, 'rb').read()
@@ -91,7 +91,7 @@ class AttachedImage(AttachedFile):
 
     def __init__(self, file, filename, uuid=None):
         super(AttachedImage, self).__init__(file, filename, uuid)
-        
+
         thumb_filename = 'thumb.'+self.thumbnail_format.lower()
         self.thumb_local_path = os.path.join(self.attachment_dir, thumb_filename)
         self.thumb_url = '/'.join([self.attachments_url, self.uuid, thumb_filename])

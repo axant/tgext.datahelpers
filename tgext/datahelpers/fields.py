@@ -17,7 +17,7 @@ class Attachment(types.TypeDecorator):
         if isinstance(value, cgi.FieldStorage):
             filename = value.filename
             file = value.file
-        elif isinstance(value, str):
+        elif isinstance(value, str) or isinstance(value, bytes):
             filename = 'attachment'
             file = tempfile.TemporaryFile()
             file.write(value)
